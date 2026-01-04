@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>♡문수 칭찬 스티커♡</title>
+    <style>
+        /* 연핑크 테마 설정 */
+        :root { 
+            --bg-pink: #fff0f3; 
+            --main-pink: #ffb6c1; 
+            --point-pink: #ff6b81; 
+        }
+        
+        body { 
+            background-color: var(--bg-pink); /* 배경을 연핑크로 변경 */
+            min-height: 100vh; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; /* 가로 중앙 정렬 */
+            justify-content: center; /* 세로 중앙 정렬 */
+            font-family: 'Nanum Gothic', sans-serif; 
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: white; 
+            width: 100%; 
+            max-width: 450px; /* 대칭을 위해 폭 고정 */
+            padding: 30px 20px; 
+            border-radius: 30px; 
+            box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        h1 { 
+            color: var(--point-pink); 
+            font-size: 1.5rem; 
+            margin-bottom: 25px; 
+            font-weight: bold; 
+        }
+        
+        /* 5개씩 2줄 완벽 대칭 정렬 */
+        .board {
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 10px; 
+            justify-content: center; /* 그리드 자체를 중앙으로 */
+            align-content: center;
+            margin: 0 auto; /* 좌우 여백 균등하게 */
+        }
+
+        .slot {
+            width: 100%; 
+            aspect-ratio: 1/1; /* 가로세로 비율 1:1 유지 */
+            border: 2px dashed #ffd1dc; 
+            border-radius: 12px;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: #fffafb;
+            cursor: pointer; 
+            transition: 0.2s;
+            box-sizing: border-box;
+        }
+
+        .slot:hover {
+            background-color: #fff0f5;
+        }
+
+        /* 찍기 전: 흐릿한 키티 */
+        .sticker {
+            width: 85%; 
+            height: auto; 
+            opacity: 0.08; 
+            filter: grayscale(100%);
+            transition: all 0.4s ease;
+            pointer-events: none; /* 클릭 방해 방지 */
+        }
+
+        /* 찍은 후: 선명한 키티 */
+        .sticker.active { 
+            opacity: 1; 
+            filter: grayscale(0%) drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); 
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .info-text {
+            margin-top: 25px; 
+            font-size: 0.85rem; 
+            color: #ff8fa3; 
+            line-height: 1.6;
+            word-break: keep-all;
+        }
+
+        .admin-btn {
+            margin-top: 20px; 
+            background: none; 
+            border: none; 
+            color: #ffb6c1;
+            text-decoration: underline; 
+            font-size: 0.75rem; 
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎀 문수 칭찬 스티커판 🎀</h1>
+    <div class="board" id="board">
+        <script>
+            const imgUrl = "https://i.postimg.cc/zG9Hb204/hwamyeon-kaebcheo-2026-01-05-012737-Photoroom.png";
+            for(let i=0; i<10; i++) {
+                document.write(`
+                    <div class="slot" onclick="handleSticker(${i})">
+                        <img src="${imgUrl}" class="sticker" id="st-${i}">
+                    </div>
+                `);
+            }
+        </script>
+    </div>
+    
+    <div class="info-text">
+        다 모으면 엄청난 선물이 ...🧸<br>
+         -션샤니- 
+    </div>
+    <button class="admin-btn" onclick="resetAll()">전체 초기화</button>
+</div>
+
+<script>
+    const PASS = "00000";
+    
+    function handleSticker(idx) {
+        const target = document.getElementById(`st-${idx}`);
+        const isActive = target.classList.contains('active');
+        
+        if (!isActive) {
+            const pw = prompt("고민 좀 ㅋ");
+            if (pw === PASS) {
+                target.classList.add('active');
+                save();
+                checkWin();
+            } else if (pw !== null) {
+                alert("어딜 감히 ㅋㅋ");
+            }
+        } else {
+            if (confirm("이 칸의 스티커를 지울까요?")) {
+                const pw = prompt("바잉 스티커야ㅠㅠ");
+                if (pw === PASS) {
+                    target.classList.remove('active');
+                    save();
+                } else if (pw !== null) {
+                    alert("에휴 ㅉ");
+                }
+            }
+        }
+    }
+
+    function checkWin() {
+        const activeCount = document.querySelectorAll('.sticker.active').length;
+        if (activeCount === 10) {
+            setTimeout(() => alert("🎉 대단해 문수! 10개 완성! 소원을 빌어봐 ❤️"), 300);
+        }
+    }
+
+    function resetAll() {
+        if (prompt("전체 초기화하시겠습니까?") === PASS) {
+            document.querySelectorAll('.sticker').forEach(s => s.classList.remove('active'));
+            save();
+        }
+    }
+
+    function save() {
+        const data = Array.from(document.querySelectorAll('.sticker')).map(s => s.classList.contains('active'));
+        localStorage.setItem('munsu_stamps_v6', JSON.stringify(data));
+    }
+
+    window.onload = () => {
+        const saved = JSON.parse(localStorage.getItem('munsu_stamps_v6'));
+        if (saved) {
+            saved.forEach((on, i) => {
+                if (on) {
+                    const el = document.getElementById(`st-${i}`);
+                    if(el) el.classList.add('active');
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>
